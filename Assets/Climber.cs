@@ -10,14 +10,14 @@ public class Climber : MonoBehaviour
 {
     private CharacterController characterController;
     public static ActionBasedController ClimbingHand;
-    private Vector3 previousPos = Vector3.zero;
+    public static Vector3 previousPos = Vector3.zero;
 
     void Start()
     {
         characterController = GetComponent<CharacterController>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (ClimbingHand)
         {
@@ -25,20 +25,18 @@ public class Climber : MonoBehaviour
         }
         else
         {
-            previousPos = Vector3.zero;
+            if (!characterController.isGrounded)
+            {
+                characterController.SimpleMove(new Vector3());
+            }
         }
     }
 
     private void Climb()
     {
         Vector3 position = ClimbingHand.positionAction.action.ReadValue<Vector3>();
-        if (previousPos == Vector3.zero)
-        {
-            previousPos = position;
-        }
-        Vector3 velocity = (position - previousPos) / Time.deltaTime;
-        characterController.Move(-velocity * Time.deltaTime);
+        Vector3 velocity = (position - previousPos) / Time.fixedDeltaTime;
+        characterController.Move(transform.rotation * -velocity * Time.fixedDeltaTime);
         previousPos = position;
-        Debug.Log(velocity);
     }
 }

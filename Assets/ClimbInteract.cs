@@ -8,9 +8,11 @@ public class ClimbInteract : XRBaseInteractable
     protected override void OnSelectEntered(SelectEnterEventArgs args)
     {
         base.OnSelectEntered(args);
-        if (args.interactorObject is XRDirectInteractor && !Climber.ClimbingHand)
+        if (args.interactorObject is XRDirectInteractor)
         {
-            Climber.ClimbingHand = args.interactorObject.transform.GetComponent<ActionBasedController>();
+            ActionBasedController controller = args.interactorObject.transform.GetComponent<ActionBasedController>();
+            Climber.ClimbingHand = controller;
+            Climber.previousPos = controller.positionAction.action.ReadValue<Vector3>();
         }
     }
 
